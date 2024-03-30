@@ -1,0 +1,16 @@
+function auto_set_image_alt( $post_ID ) {
+    if ( wp_attachment_is_image( $post_ID ) ) {
+        $my_image_title = get_post( $post_ID )->post_title;
+        $my_image_title = preg_replace( '%\s*[-_\s]+\s*%', ' ',  $my_image_title );
+        $my_image_title = ucwords( strtolower( $my_image_title ) );
+        $my_image_meta = array(
+            'ID' => $post_ID,
+            'post_title' => $my_image_title, // Set image Title to sanitized title
+            'post_excerpt' => $my_image_title, // Set image Caption (excerpt) to sanitized title
+            'post_content' => $my_image_title, // Set image Description (content) to sanitized title
+        );
+        update_post_meta( $post_ID, '_wp_attachment_image_alt', $my_image_title );
+        wp_update_post( $my_image_meta );
+    }
+}
+add_action( 'add_attachment', 'auto_set_image_alt' );
